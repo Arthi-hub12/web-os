@@ -1,29 +1,548 @@
 <!DOCTYPE html>
 <html>
-   <body background="minimal-landscape-sunrise-4k-jy-1920x1080.jpg">
-    <div style="border: solid black 1px ;width:500px;height:200px;background-color: white;border-radius: 16px;padding:10px;
-    position: absolute;top:50%;bottom:50%;left:50%;right:50%;transform:translate(-50%,-50%);">
+   <body style=" 
+   background-image:url(minimal-landscape-sunrise-4k-jy-1920x1080.jpg); background-position: center;background-repeat: no-repeat;background-size: cover;margin:0px;height:100vh">
     
-    <img style="width:50px ;height:50px ;border-radius:50px" src="kdram.jpeg">
-    <h2>Os</h2>
-    <p>
-    this is my first os and i am doing it with the help of chat gpt ndhcbfcdbc dbfcjbdjbc dmbcjdbcfuejbc jhcujsncjsndc jhedjcn sed 
-    dbcjcbjefbj kncdejfhuehdncdknc djfcjedhfuenc nfciehicend djhfuehjc uncufn jebfcuebfcuebue
-    </p>
-   </div>
-   <div style="position: absolute; width: 100%;
-    display: flex; 
-    backdrop-filter: blur(10px);
-    background-color: rgba(0, 0, 0, 0.25); 
-    color: #fff; 
-    ustify-content: space-between;">
-    <p style="margin-left: 16px;">
-      ThomasOS
-    </p>
-    <p style="margin-right: 16px;">
-      6/21/2023 3:41 PM
-    </p>
+    
+     
+
+</div>
+
+<!-- TASKBAR -->
+<div style="
+position: fixed;
+bottom: 0;
+left: 0;
+width: 98%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+backdrop-filter: blur(10px);
+background-color: rgba(0, 0, 0, 0.4);
+color: #fff;
+padding: 12px 30px;
+">
+  <span>ThomasOS</span>
+  <span id="clock"></span>
+
+</div>
+
+      <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body{
+            height:100vh;
+            background:linear-gradient(135deg,#1f1f2e,#2d2d44);
+            overflow:hidden;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .desktop{
+            flex:1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-size:40px;
+            letter-spacing:3px;
+        }
+
+        .taskbar{
+            height:70px;
+            width:100%;
+            background:rgba(255,255,255,0.08);
+            backdrop-filter:blur(15px);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 20px;
+            border-top:1px solid rgba(255,255,255,0.2);
+            position:relative;
+        }
+
+        .start{
+            font-size:22px;
+            cursor:pointer;
+            color:white;
+            padding:8px;
+            border-radius:10px;
+            transition:0.3s;
+        }
+
+        .start:hover{
+            background:rgba(255,255,255,0.2);
+        }
+
+        .apps{
+            display:flex;
+            gap:30px;
+        }
+
+        .app{
+            font-size:22px;
+            cursor:pointer;
+            padding:8px;
+            border-radius:12px;
+            position:relative;
+            transition:0.3s;
+        }
+
+        .app:hover{
+            background:rgba(255,255,255,0.2);
+            transform:translateY(-5px);
+        }
+
+        .app::after{
+            content:"";
+            position:absolute;
+            bottom:-5px;
+            left:50%;
+            transform:translateX(-50%);
+            width:6px;
+            height:6px;
+            background:white;
+            border-radius:50%;
+            opacity:0;
+        }
+
+        .app.active::after{
+            opacity:1;
+        }
+
+        .tray{
+            display:flex;
+            flex-direction:column;
+            align-items:flex-end;
+            color:white;
+            font-size:14px;
+        }
+
+        .time{
+            font-weight:bold;
+            font-size:16px;
+        }
+
+        .date{
+            font-size:12px;
+            opacity:0.8;
+        }
+
+        .start-menu{
+            position:absolute;
+            bottom:80px;
+            left:20px;
+            width:250px;
+            background:rgba(255,255,255,0.1);
+            backdrop-filter:blur(20px);
+            border-radius:15px;
+            padding:20px;
+            color:white;
+            display:none;
+            flex-direction:column;
+            gap:15px;
+        }
+
+        .start-menu div{
+            padding:8px;
+            border-radius:10px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .start-menu div:hover{
+            background:rgba(255,255,255,0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="desktop">
+        My Custom OS
+    </div>
+
+    <div class="taskbar">
+
+        <div class="start" onclick="toggleMenu()">⬢</div>
+
+        <div class="apps">
+            <div class="app active">🌐</div>
+            <div class="app">📁</div>
+            <div class="app">🎵</div>
+            <div class="app">⚙️</div>
+        </div>
+
+        <div class="tray">
+            <div class="time" id="time"></div>
+            <div class="date" id="date"></div>
+        </div>
+
+        <div class="start-menu" id="menu">
+            <div>📁 File Explorer</div>
+            <div>🌐 Browser</div>
+            <div>⚙ Settings</div>
+            <div>🔒 Shut Down</div>
+        </div>
+
+    </div>
+
+<script>
+    function updateDateTime(){
+        let now = new Date();
+
+        let timeOptions = {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+
+        let dateOptions = {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        };
+
+        document.getElementById("time").innerText =
+            now.toLocaleTimeString([], timeOptions);
+
+        document.getElementById("date").innerText =
+            now.toLocaleDateString([], dateOptions);
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    function toggleMenu(){
+        let menu = document.getElementById("menu");
+        menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+    }
+</script>
+<div id="welcome" style="
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(15px);
+  background: rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(255,255,255,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+">
+
+  <!-- Profile / OS Logo -->
+  <img src="images.jpeg"
+    style="
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: white;
+      object-fit: cover;
+      margin-bottom: 15px;
+    " />
+
+  <!-- OS Name -->
+  <h1 style="margin: 5px; font-size: 26px; letter-spacing: 2px;">
+    BasicO
+  </h1>
+
+  <!-- Version -->
+  <p style="margin: 0; font-size: 14px; opacity: 0.8;">
+    Version 1.0 • Build 2026
+  </p>
+
+  <!-- Divider -->
+  <div style="
+    width: 60%;
+    height: 2px;
+    background: rgba(255,255,255,0.3);
+    margin: 15px 0;
+  "></div>
+
+  <!-- Welcome Message -->
+  <p style="font-size: 14px; padding: 0 20px;">
+    Welcome back 👋 <br>
+    Click below to start your session.
+  </p>
+
+  <!-- Login Button -->
+  <button style="
+    margin-top: 15px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    cursor:pointer;
+    background: white;
+    color: black;
+    font-weight: bold;
+    transition: 0.3s;
+  "
+  onmouseover="this.style.transform='scale(1.1)'"
+  onmouseout="this.style.transform='scale(1)'"
+  >
+    Enter OS
+  </button>
+
+</div>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Side Desktop Apps</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI;
+}
+
+body{
+  height:100vh;
+  background:linear-gradient(135deg,#1e1e2f,#2d2d44);
+  overflow:hidden;
+  color:white;
+}
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI;
+}
+
+body{
+  height:100vh;
+  background:linear-gradient(135deg,#1e1e2f,#2d2d44);
+  overflow:hidden;
+  color:white;
+}
+
+/* LEFT SIDE ICON COLUMN */
+.side-apps{
+  position:absolute;
+  top:20px;
+  left:20px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+/* Desktop Icon */
+.desktop-icon{
+  width:85px;
+  text-align:center;
+  cursor:pointer;
+  padding:8px;
+  border-radius:10px;
+  transition:0.2s;
+  user-select:none;
+}
+
+.desktop-icon img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+}
+
+.desktop-icon span{
+  display:block;
+  margin-top:5px;
+  font-size:13px;
+  color:white;
+}
+
+/* Selected Icon */
+.desktop-icon.selected{
+  background:rgba(255,255,255,0.25);
+}
+
+/* APP WINDOW */
+.app-window{
+  position:absolute;
+  top:120px;
+  left:220px;
+  width:420px;
+  height:300px;
+  background:white;
+  color:black;
+  border-radius:10px;
+  display:none;
+  flex-direction:column;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+.app-header{
+  background:#2d2d44;
+  color:white;
+  padding:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-radius:10px 10px 0 0;
+}
+
+.app-header button{
+  background:none;
+  border:none;
+  color:white;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.app-content{
+  padding:15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDE DESKTOP ICONS -->
+<div class="side-apps">
+
+  <div class="desktop-icon" onclick="selectIcon(this)" ondblclick="openApp('browser')">
+    <img src="https://cdn-icons-png.flaticon.com/512/888/888879.png">
+    <span>Browser</span>
   </div>
+
+  <div class="desktop-icon" onclick="selectIcon(this)" ondblclick="openApp('files')">
+    <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png">
+    <span>Files</span>
+  </div>
+
+  <div class="desktop-icon" onclick="selectIcon(this)" ondblclick="openApp('music')">
+    <img src="https://cdn-icons-png.flaticon.com/512/727/727240.png">
+    <span>Music</span>
+  </div>
+
+  <div class="desktop-icon" onclick="selectIcon(this)" ondblclick="openApp('calculator')">
+    <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png">
+    <span>Calculator</span>
+  </div>
+
+  <div class="desktop-icon" onclick="selectIcon(this)" ondblclick="openApp('notes')">
+    <img src="https://cdn-icons-png.flaticon.com/512/2965/2965358.png">
+    <span>Notes</span>
+  </div>
+
+  <div class="desktop-icon" onclick="selectIcon(this)" ondblclick="openApp('settings')">
+    <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png">
+    <span>Settings</span>
+  </div>
+
+</div>
+
+<!-- APP WINDOWS -->
+
+<div class="app-window" id="browser">
+  <div class="app-header">
+    Browser
+    <button onclick="closeApp('browser')">✖</button>
+  </div>
+  <div class="app-content">
+    <input type="text" placeholder="Search..." style="width:100%;padding:6px;">
+    <p>Simple browser simulation.</p>
+  </div>
+</div>
+
+<div class="app-window" id="files">
+  <div class="app-header">
+    File Manager
+    <button onclick="closeApp('files')">✖</button>
+  </div>
+  <div class="app-content">
+    <ul>
+      <li>📄 Resume.pdf</li>
+      <li>📁 Projects</li>
+      <li>📁 Photos</li>
+    </ul>
+  </div>
+</div>
+
+<div class="app-window" id="music">
+  <div class="app-header">
+    Music Player
+    <button onclick="closeApp('music')">✖</button>
+  </div>
+  <div class="app-content">
+    <p>🎵 Now Playing</p>
+    <button onclick="alert('Playing Music...')">Play</button>
+  </div>
+</div>
+
+<div class="app-window" id="calculator">
+  <div class="app-header">
+    Calculator
+    <button onclick="closeApp('calculator')">✖</button>
+  </div>
+  <div class="app-content">
+    <input type="number" id="num1" placeholder="Number 1">
+    <input type="number" id="num2" placeholder="Number 2">
+    <button onclick="add()">Add</button>
+    <p id="result"></p>
+  </div>
+</div>
+
+<div class="app-window" id="notes">
+  <div class="app-header">
+    Notes
+    <button onclick="closeApp('notes')">✖</button>
+  </div>
+  <div class="app-content">
+    <textarea style="width:100%;height:150px;"></textarea>
+  </div>
+</div>
+
+<div class="app-window" id="settings">
+  <div class="app-header">
+    Settings
+    <button onclick="closeApp('settings')">✖</button>
+  </div>
+  <div class="app-content">
+    <p>Theme: Dark Mode</p>
+    <p>Version: 1.0</p>
+  </div>
+</div>
+
+<script>
+function openApp(id){
+  document.getElementById(id).style.display = "flex";
+}
+
+function closeApp(id){
+  document.getElementById(id).style.display = "none";
+}
+
+function selectIcon(icon){
+  document.querySelectorAll('.desktop-icon')
+    .forEach(i => i.classList.remove('selected'));
+  icon.classList.add('selected');
+}
+
+function add(){
+  let n1 = Number(document.getElementById("num1").value);
+  let n2 = Number(document.getElementById("num2").value);
+  document.getElementById("result").innerText = "Result: " + (n1 + n2);
+}
+</script>
+
+
 
    </body>
     
