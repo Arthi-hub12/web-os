@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasicOs</title>
+    
+    <link href="" rel="stylesheet">
+
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent: #ff00ff; 
+            --text: #ffffff;
+            --bg-url: url('blue wallpaper.jpg');
+        }
+
+        
+
+        body {
+            height: 100vh;
+            background: var(--bg-url) no-repeat center center/cover;
+            overflow: hidden;
+            color: var(--text);
+            transition: background 0.5s ease;
+        }
+
+       
+        #login-screen {
+            position: fixed; inset: 0;z-index: 9999;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(30px);
+            display: flex;justify-content:center;align-items: center;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .login-card {
+            width: 350px; height: 350px; border-radius: 50%;
+            background: var(--glass);
+            border:1px solid var(--glass-border);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .login-card img { width: 90px; height: 90px; border-radius: 50%; margin-bottom: 15px; border: 2px solid white; object-fit: cover; }
+        
+        .enter-btn {
+            margin-top: 20px; padding:12px 35px;border-radius:30px;border:none;
+            background: white; color: black;font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .enter-btn:hover {transform:scale(1.1);background:var(--accent);color:white; }
+
+        
+        .desktop {
+            height: 100vh; padding: 30px;
+            display: grid; grid-template-columns: 110px 1fr 320px; gap: 20px;
+        }
+
+        .side-apps {display:flex;flex-direction: column; gap:15px; z-index: 5; }
+
+        .desktop-icon {
+            text-align: center;cursor: pointer;padding:12px;border-radius: 18px;transition: 0.2s;
+            user-select: none;
+        }
+        .desktop-icon:hover { background: var(--glass); transform: translateY(-2px); }
+        .desktop-icon img { width: 42px; height: 42px; margin-bottom: 6px; }
+        .desktop-icon span { display: block; font-size: 11px; font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+       
+        .widget-panel {
+            background: var(--glass); backdrop-filter: blur(20px);
+            border-radius: 28px; border: 1px solid var(--glass-border);
+            padding: 25px; height: fit-content; display: flex; flex-direction: column; gap: 15px;
+            z-index: 5;
+        }
+
+        .calendar-header { font-weight: 600; text-align:center; font-family: 'Outfit'; letter-spacing: 1px; }
+        .calendar-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; text-align: center; font-size: 11px; }
+        .cal-day { padding: 6px; border-radius: 8px; transition: 0.3s; }
+        .cal-today { background:var(--accent);font-weight:bold; box-shadow: 0 0 15px var(--accent); }
+
+
+        .app-window {
+            position: absolute; width: 450px; min-height:300px;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            color: #1a1a1a; border-radius: 16px; display: none; flex-direction: column;
+            overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 10;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .app-header {
+            background: #e8e8e8; padding: 10px 18px; display: flex; justify-content: space-between;
+            align-items: center; cursor: grab; user-select: none;
+        }
+        .app-header:active { cursor: grabbing; }
+        .header-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .controls { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+
+        .app-content { padding: 20px; flex:1;overflow-y: auto; }
+
+        /* --- TASKBAR --- */
+        .taskbar {
+            position: fixed; bottom: 15px;left:50%; transform: translateX(-50%);
+            width: fit-content; min-width: 400px; height: 60px;
+            background: var(--glass); backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            display: flex; align-items: center; padding: 0 30px; justify-content: space-between; z-index: 1000;
+        }
+
+        .task-icons { display: flex; gap: 25px; align-items: center; font-family: 'Outfit'; font-weight: 500; }
+        #time-tray { text-align: right; line-height: 1.2; border-left: 1px solid var(--glass-border); padding-left: 20px; }
+
+        /* --- SPECIFIC APP STYLES --- */
+        textarea { width: 100%; height:180px; border-radius: 10px;padding:12px;border: 1px solid #ddd; outline: none; }
+        .settings-row { margin-bottom:15px; display:flex; justify-content: space-between; align-items: center; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4,1fr); gap:10px; }
+        .calc-btn { padding: 15px; border: none; border-radius: 8px; background: #eee; cursor: pointer; font-weight: bold; }
+        .calc-btn:hover { background: #ddd; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <img src="stellar-spacecraft-journey-galaxy-scene-desktop-wallpaper-cover.jpg">
+            <h1 style="font-family: 'Outfit'">BasicOs</h1>
+            <p style="opacity: 0.6; font-size: 13px; margin-top: 5px;">Version 1.1 • 2026</p>
+            <button class="enter-btn" onclick="enterOS()">Sign In</button>
+        </div>
+    </div>
+
+    <div class="desktop">
+        <div class="side-apps">
+            <div class="desktop-icon" onclick="openApp('browser')">
+                <img src="chrome-2815967_640.jpg">
+                <span>Web Browser</span>
+            </div>
+            <div class="desktop-icon" onclick="openApp('notes-app')">
+                <img src="notes app.png">
+                <span>Notepad</span>
+            </div>
+            <div class="desktop-icon" onclick="openApp('calc-app')">
+                <img src="calc.png">
+                <span>Calculator</span>
+            </div>
+            <div class="desktop-icon" onclick="openApp('settings-app')">
+                <img src="set.png">
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <div></div> <div class="widget-panel">
+            <div class="calendar-header" id="month-name">April 2026</div>
+            <div class="calendar-grid"id="calendar-body"></div>
+            <p style="font-size:11px;font-weight:700;opacity:0.6;margin-top:10px;letter-spacing:1px;">SCRATCHPAD</p>
+            <textarea id="widget-notes"placeholder="Quick thoughts..."oninput="saveScratch()"></textarea>
+        </div>
+    </div>
+
+    <div id="browser"class="app-window" style="top:100px;left: 300px;">
+        <div class="app-header" onmousedown="dragElement(this.parentElement)">
+            <div class="header-title">🌐 Web Browser</div>
+            <div class="controls"><span class="dot" style="background:#ff5f56" onclick="closeApp('browser')"></span></div>
+        </div>
+        <div class="app-content">
+            <input type="text" value="https://google.com" style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
+            <div style="height: 200px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+                <p style="color: #888;">Simulated Web Content</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notes-app" class="app-window" style="top: 150px; left: 400px;">
+        <div class="app-header" onmousedown="dragElement(this.parentElement)">
+            <div class="header-title">📝 Notepad</div>
+            <div class="controls"><span class="dot" style="background:#ff5f56" onclick="closeApp('notes-app')"></span></div>
+        </div>
+        <div class="app-content">
+            <textarea id="main-note-text" placeholder="Start writing..." oninput="saveMainNote()"></textarea>
+            <p style="font-size: 11px; color: #666; margin-top: 5px;">Saves automatically to local storage.</p>
+        </div>
+    </div>
+
+    <div id="calc-app" class="app-window" style="top: 200px; left: 500px; width: 300px;">
+        <div class="app-header" onmousedown="dragElement(this.parentElement)">
+            <div class="header-title">🔢 Calculator</div>
+            <div class="controls"><span class="dot" style="background:#ff5f56" onclick="closeApp('calc-app')"></span></div>
+        </div>
+        <div class="app-content">
+            <input type="text" id="calc-display" readonly style="width:100%; font-size:24px; text-align:right; margin-bottom:15px; padding:10px; background:#f0f0f0; border:none;">
+            <div class="calc-grid">
+                <button class="calc-btn" onclick="calcInput('7')">7</button><button class="calc-btn" onclick="calcInput('8')">8</button><button class="calc-btn" onclick="calcInput('9')">9</button><button class="calc-btn" onclick="calcInput('/')">/</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button><button class="calc-btn" onclick="calcInput('5')">5</button><button class="calc-btn" onclick="calcInput('6')">6</button><button class="calc-btn" onclick="calcInput('*')">*</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button><button class="calc-btn" onclick="calcInput('2')">2</button><button class="calc-btn" onclick="calcInput('3')">3</button><button class="calc-btn" onclick="calcInput('-')">-</button>
+                <button class="calc-btn" style="background:var(--accent); color:white;" onclick="calculate()">=</button><button class="calc-btn" onclick="calcInput('0')">0</button><button class="calc-btn" onclick="document.getElementById('calc-display').value=''">C</button><button class="calc-btn" onclick="calcInput('+')">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-app" class="app-window" style="top: 120px; left: 350px;">
+        <div class="app-header" onmousedown="dragElement(this.parentElement)">
+            <div class="header-title">⚙️ Settings</div>
+            <div class="controls"><span class="dot" style="background:#ff5f56" onclick="closeApp('settings-app')"></span></div>
+        </div>
+        <div class="app-content">
+            <div class="settings-row">
+                <span>Accent Color</span>
+                <input type="color" id="accent-picker" value="#ff00ff" onchange="updateAccent(this.value)">
+            </div>
+            <div class="settings-row">
+                <span>Wallpaper</span>
+                <select onchange="updateBg(this.value)">
+                    <option value="https://images.unsplash.com/photo-1464802686167-b939a67a06a1?q=80&w=2070">Space Blue</option>
+                    <option value="https://images.unsplash.com/photo-1477346611705-65d1883cee1e?q=80&w=2070">Mountain Dusk</option>
+                    <option value="https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071">Dark Forest</option>
+                </select>
+            </div>
+            <button class="enter-btn" style="width:100%;" onclick="alert('System Updated!')">Apply Changes</button>
+        </div>
+    </div>
+
+    <div class="taskbar">
+        <div class="task-icons">
+            <div style="cursor:pointer; color:var(--accent); font-size:20px;">⬢</div>
+            <span style="font-size:14px; letter-spacing:1px;">BasicOs</span>
+        </div>
+        <div id="time-tray">
+            <div id="time" style="font-size:14px; font-weight:600;">12:00 PM</div>
+            <div id="date" style="font-size:10px; opacity:0.7;">Monday, 20 April</div>
+        </div>
+    </div>
+
+    <script>
+        // OS Start Logic
+        function enterOS() {
+            const login = document.getElementById('login-screen');
+            login.style.opacity = '0';
+            login.style.transform = 'scale(1.2)';
+            setTimeout(() => login.style.display = 'none', 800);
+        }
+
+        // Clock Logic
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('date').innerText = now.toLocaleDateString([], {weekday: 'long', day: 'numeric', month: 'long'});
+        }
+        setInterval(updateTime, 1000); updateTime();
+
+        // App Management
+        let zIndex = 100;
+        function openApp(id) {
+            const app = document.getElementById(id);
+            app.style.display = 'flex';
+            app.style.zIndex = ++zIndex;
+        }
+        function closeApp(id) { document.getElementById(id).style.display = 'none'; }
+
+        // Draggable Logic (Human-like interaction)
+        function dragElement(elmnt) {
+            elmnt.style.zIndex = ++zIndex;
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const header = elmnt.querySelector('.app-header');
+            
+            header.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // Calculator Logic
+        function calcInput(v) { document.getElementById('calc-display').value += v; }
+        function calculate() {
+            try {
+                const display = document.getElementById('calc-display');
+                display.value = eval(display.value);
+            } catch { alert('Invalid calculation'); }
+        }
+
+        // Settings Logic
+        function updateAccent(color) { document.documentElement.style.setProperty('--accent', color); }
+        function updateBg(url) { document.documentElement.style.setProperty('--bg-url', `url('${url}')`); }
+
+        // Data Persistence (Auto-Save)
+        function saveScratch() { localStorage.setItem('scratchpad', document.getElementById('widget-notes').value); }
+        function saveMainNote() { localStorage.setItem('main-note', document.getElementById('main-note-text').value); }
+
+        window.onload = () => {
+            document.getElementById('widget-notes').value = localStorage.getItem('scratchpad') || "";
+            document.getElementById('main-note-text').value = localStorage.getItem('main-note') || "";
+            initCalendar();
+        };
+
+        function initCalendar() {
+            const body = document.getElementById('calendar-body');
+            const now = new Date();
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const today = now.getDate();
+            let html = "";
+            for(let i=1; i<=daysInMonth; i++) {
+                html += `<div class="cal-day ${i === today ? 'cal-today' : ''}">${i}</div>`;
+            }
+            body.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
