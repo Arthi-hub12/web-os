@@ -15,9 +15,7 @@
             --text: #ffffff;
             --bg-url: url('blue wallpaper.jpg');
         }
-
-        
-
+       
         body {
             height: 100vh;
             background: var(--bg-url) no-repeat center center/cover;
@@ -26,8 +24,7 @@
             transition: background 0.5s ease;
         }
 
-       
-        #login-screen {
+       #login-screen {
             position: fixed; inset: 0;z-index: 9999;
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(30px);
@@ -100,7 +97,7 @@
 
         .app-content { padding: 20px; flex:1;overflow-y: auto; }
 
-        /* --- TASKBAR --- */
+        
         .taskbar {
             position: fixed; bottom: 15px;left:50%; transform: translateX(-50%);
             width: fit-content; min-width: 400px; height: 60px;
@@ -112,7 +109,7 @@
         .task-icons { display: flex; gap: 25px; align-items: center; font-family: 'Outfit'; font-weight: 500; }
         #time-tray { text-align: right; line-height: 1.2; border-left: 1px solid var(--glass-border); padding-left: 20px; }
 
-        /* --- SPECIFIC APP STYLES --- */
+        
         textarea { width: 100%; height:180px; border-radius: 10px;padding:12px;border: 1px solid #ddd; outline: none; }
         .settings-row { margin-bottom:15px; display:flex; justify-content: space-between; align-items: center; }
         .calc-grid { display: grid; grid-template-columns: repeat(4,1fr); gap:10px; }
@@ -233,7 +230,7 @@
     </div>
 
     <script>
-        // OS Start Logic
+       
         function enterOS() {
             const login = document.getElementById('login-screen');
             login.style.opacity = '0';
@@ -241,7 +238,7 @@
             setTimeout(() => login.style.display = 'none', 800);
         }
 
-        // Clock Logic
+        
         function updateTime() {
             const now = new Date();
             document.getElementById('time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -249,7 +246,6 @@
         }
         setInterval(updateTime, 1000); updateTime();
 
-        // App Management
         let zIndex = 100;
         function openApp(id) {
             const app = document.getElementById(id);
@@ -258,7 +254,6 @@
         }
         function closeApp(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Draggable Logic (Human-like interaction)
         function dragElement(elmnt) {
             elmnt.style.zIndex = ++zIndex;
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -290,7 +285,6 @@
             }
         }
 
-        // Calculator Logic
         function calcInput(v) { document.getElementById('calc-display').value += v; }
         function calculate() {
             try {
@@ -299,11 +293,10 @@
             } catch { alert('Invalid calculation'); }
         }
 
-        // Settings Logic
         function updateAccent(color) { document.documentElement.style.setProperty('--accent', color); }
         function updateBg(url) { document.documentElement.style.setProperty('--bg-url', `url('${url}')`); }
 
-        // Data Persistence (Auto-Save)
+    
         function saveScratch() { localStorage.setItem('scratchpad', document.getElementById('widget-notes').value); }
         function saveMainNote() { localStorage.setItem('main-note', document.getElementById('main-note-text').value); }
 
