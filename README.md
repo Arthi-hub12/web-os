@@ -1,7 +1,7 @@
 # BasicOS
 ## INTRODUCTION
 - This is my first project on OS which includes html,css and java script
-- Project name is BasicOs and is functional.As this is my First time doing this,it is kind of basic and silly
+- Project name is BasicOs and is functional.As this is my First time doing this,it is kind of basic.
 - it has a functional sign in windows and functional apps.
 ## LIST OF TOOLS USED
 - I used basic html css and javascript
