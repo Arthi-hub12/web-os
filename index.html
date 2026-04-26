@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BasicOs</title>
     
-    <link href="" rel="stylesheet">
-
     <style>
         :root {
             --glass: rgba(255, 255, 255, 0.1);
@@ -22,6 +20,8 @@
             overflow: hidden;
             color: var(--text);
             transition: background 0.5s ease;
+            margin: 0;
+            font-family: sans-serif;
         }
 
        #login-screen {
@@ -52,6 +52,7 @@
         .desktop {
             height: 100vh; padding: 30px;
             display: grid; grid-template-columns: 110px 1fr 320px; gap: 20px;
+            box-sizing: border-box;
         }
 
         .side-apps {display:flex;flex-direction: column; gap:15px; z-index: 5; }
@@ -72,7 +73,7 @@
             z-index: 5;
         }
 
-        .calendar-header { font-weight: 600; text-align:center; font-family: 'Outfit'; letter-spacing: 1px; }
+        .calendar-header { font-weight: 600; text-align:center; font-family: 'Outfit', sans-serif; letter-spacing: 1px; }
         .calendar-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; text-align: center; font-size: 11px; }
         .cal-day { padding: 6px; border-radius: 8px; transition: 0.3s; }
         .cal-today { background:var(--accent);font-weight:bold; box-shadow: 0 0 15px var(--accent); }
@@ -106,11 +107,11 @@
             display: flex; align-items: center; padding: 0 30px; justify-content: space-between; z-index: 1000;
         }
 
-        .task-icons { display: flex; gap: 25px; align-items: center; font-family: 'Outfit'; font-weight: 500; }
+        .task-icons { display: flex; gap: 25px; align-items: center; font-family: 'Outfit', sans-serif; font-weight: 500; }
         #time-tray { text-align: right; line-height: 1.2; border-left: 1px solid var(--glass-border); padding-left: 20px; }
 
         
-        textarea { width: 100%; height:180px; border-radius: 10px;padding:12px;border: 1px solid #ddd; outline: none; }
+        textarea { width: 100%; height:180px; border-radius: 10px;padding:12px;border: 1px solid #ddd; outline: none; box-sizing: border-box; }
         .settings-row { margin-bottom:15px; display:flex; justify-content: space-between; align-items: center; }
         .calc-grid { display: grid; grid-template-columns: repeat(4,1fr); gap:10px; }
         .calc-btn { padding: 15px; border: none; border-radius: 8px; background: #eee; cursor: pointer; font-weight: bold; }
@@ -121,8 +122,8 @@
 
     <div id="login-screen">
         <div class="login-card">
-            <img src="stellar-spacecraft-journey-galaxy-scene-desktop-wallpaper-cover.jpg">
-            <h1 style="font-family: 'Outfit'">BasicOs</h1>
+            <img src="stellar-spacecraft-journey-galaxy-scene-desktop-wallpaper-cover.jpg" alt="Profile">
+            <h1 style="font-family: 'Outfit', sans-serif; margin-bottom: 0;">BasicOs</h1>
             <p style="opacity: 0.6; font-size: 13px; margin-top: 5px;">Version 1.1 • 2026</p>
             <button class="enter-btn" onclick="enterOS()">Sign In</button>
         </div>
@@ -131,40 +132,59 @@
     <div class="desktop">
         <div class="side-apps">
             <div class="desktop-icon" onclick="openApp('browser')">
-                <img src="chrome-2815967_640.jpg">
+                <img src="chrome-2815967_640.jpg" alt="Browser">
                 <span>Web Browser</span>
             </div>
             <div class="desktop-icon" onclick="openApp('notes-app')">
-                <img src="notes app.png">
+                <img src="notes app.png" alt="Notes">
                 <span>Notepad</span>
             </div>
             <div class="desktop-icon" onclick="openApp('calc-app')">
-                <img src="calc.png">
+                <img src="calc.png" alt="Calculator">
                 <span>Calculator</span>
             </div>
             <div class="desktop-icon" onclick="openApp('settings-app')">
-                <img src="set.png">
+                <img src="set.png" alt="Settings">
                 <span>Settings</span>
+            </div>
+            <div class="desktop-icon" onclick="openApp('about-me')">
+                <img src="about mem.png" alt="About">
+                <span>About-Me</span>
             </div>
         </div>
 
-        <div></div> <div class="widget-panel">
+        <div></div> 
+        
+        <div class="widget-panel">
             <div class="calendar-header" id="month-name">April 2026</div>
-            <div class="calendar-grid"id="calendar-body"></div>
+            <div class="calendar-grid" id="calendar-body"></div>
             <p style="font-size:11px;font-weight:700;opacity:0.6;margin-top:10px;letter-spacing:1px;">SCRATCHPAD</p>
-            <textarea id="widget-notes"placeholder="Quick thoughts..."oninput="saveScratch()"></textarea>
+            <textarea id="widget-notes" placeholder="Quick thoughts..." oninput="saveScratch()"></textarea>
         </div>
     </div>
 
-    <div id="browser"class="app-window" style="top:100px;left: 300px;">
+    <div id="browser" class="app-window" style="top:100px;left: 300px; width: 600px; min-height: 450px;">
         <div class="app-header" onmousedown="dragElement(this.parentElement)">
             <div class="header-title">🌐 Web Browser</div>
             <div class="controls"><span class="dot" style="background:#ff5f56" onclick="closeApp('browser')"></span></div>
         </div>
+        <div class="app-content" style="display: flex; flex-direction: column; padding: 10px; overflow: hidden;">
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <input type="text" id="browser-url" value="https://en.wikipedia.org" style="flex: 1; padding:8px; border-radius:5px; border:1px solid #ccc; box-sizing: border-box;" onkeydown="checkEnterBrowser(event)">
+                <button onclick="navigateBrowser()" style="padding: 8px 15px; border: none; border-radius: 5px; background: var(--accent); color: white; cursor: pointer; font-weight: bold;">Go</button>
+            </div>
+            <iframe id="browser-frame" src="https://en.wikipedia.org" style="flex: 1; width: 100%; height: 100%; min-height: 350px; border: 1px solid #ddd; border-radius: 5px; background: white;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+        </div>
+    </div>
+
+    <div id="about-me" class="app-window" style="top:100px;left:300px;position:fixed;z-index:1000;">
+        <div class="app-header" onmousedown="dragElement(this.parentElement)">
+            <div class="header-title">About-Me</div>
+            <div class="controls"><span class="dot" style="background: red" onclick="closeApp('about-me')"></span></div>
+        </div>
         <div class="app-content">
-            <input type="text" value="https://google.com" style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-            <div style="height: 200px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
-                <p style="color: #888;">Simulated Web Content</p>
+            <div style="height:200px;background:white; display:flex;align-items: center;justify-content:center;border-radius: 10px; padding: 20px; text-align: center;">
+                <p style="color: #888;">Hey hi, I am Arthi from India. I ain't a web developer but I am learning it. My hobbies are reading books, crocheting and watching series.</p>
             </div>
         </div>
     </div>
@@ -186,7 +206,7 @@
             <div class="controls"><span class="dot" style="background:#ff5f56" onclick="closeApp('calc-app')"></span></div>
         </div>
         <div class="app-content">
-            <input type="text" id="calc-display" readonly style="width:100%; font-size:24px; text-align:right; margin-bottom:15px; padding:10px; background:#f0f0f0; border:none;">
+            <input type="text" id="calc-display" readonly style="width:100%; box-sizing: border-box; font-size:24px; text-align:right; margin-bottom:15px; padding:10px; background:#f0f0f0; border:none; border-radius: 8px;">
             <div class="calc-grid">
                 <button class="calc-btn" onclick="calcInput('7')">7</button><button class="calc-btn" onclick="calcInput('8')">8</button><button class="calc-btn" onclick="calcInput('9')">9</button><button class="calc-btn" onclick="calcInput('/')">/</button>
                 <button class="calc-btn" onclick="calcInput('4')">4</button><button class="calc-btn" onclick="calcInput('5')">5</button><button class="calc-btn" onclick="calcInput('6')">6</button><button class="calc-btn" onclick="calcInput('*')">*</button>
@@ -208,7 +228,7 @@
             </div>
             <div class="settings-row">
                 <span>Wallpaper</span>
-                <select onchange="updateBg(this.value)">
+                <select onchange="updateBg(this.value)" style="padding: 5px; border-radius: 5px;">
                     <option value="https://images.unsplash.com/photo-1464802686167-b939a67a06a1?q=80&w=2070">Space Blue</option>
                     <option value="https://images.unsplash.com/photo-1477346611705-65d1883cee1e?q=80&w=2070">Mountain Dusk</option>
                     <option value="https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071">Dark Forest</option>
@@ -216,6 +236,7 @@
             </div>
             <button class="enter-btn" style="width:100%;" onclick="alert('System Updated!')">Apply Changes</button>
         </div>
+        
     </div>
 
     <div class="taskbar">
@@ -230,7 +251,6 @@
     </div>
 
     <script>
-       
         function enterOS() {
             const login = document.getElementById('login-screen');
             login.style.opacity = '0';
@@ -238,7 +258,6 @@
             setTimeout(() => login.style.display = 'none', 800);
         }
 
-        
         function updateTime() {
             const now = new Date();
             document.getElementById('time').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -247,15 +266,22 @@
         setInterval(updateTime, 1000); updateTime();
 
         let zIndex = 100;
+        
         function openApp(id) {
             const app = document.getElementById(id);
             app.style.display = 'flex';
             app.style.zIndex = ++zIndex;
         }
-        function closeApp(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function closeApp(id) { 
+            document.getElementById(id).style.display = 'none'; 
+        }
 
         function dragElement(elmnt) {
-            elmnt.style.zIndex = ++zIndex;
+            elmnt.addEventListener("mousedown", () => {
+                elmnt.style.zIndex = ++zIndex;
+            });
+            
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             const header = elmnt.querySelector('.app-header');
             
@@ -285,6 +311,24 @@
             }
         }
 
+        
+function navigateBrowser() {
+    let input = document.getElementById('browser-url').value.trim();
+    let finalUrl = "";
+if (input.includes(' ') || !input.includes('.')) {
+        finalUrl = "https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(input);
+    } else {
+       finalUrl = input;
+        
+        if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+            finalUrl = 'https://' + finalUrl;
+        }
+    }
+
+    document.getElementById('browser-frame').src = finalUrl;
+    document.getElementById('browser-url').value = finalUrl; 
+}
+
         function calcInput(v) { document.getElementById('calc-display').value += v; }
         function calculate() {
             try {
@@ -296,7 +340,7 @@
         function updateAccent(color) { document.documentElement.style.setProperty('--accent', color); }
         function updateBg(url) { document.documentElement.style.setProperty('--bg-url', `url('${url}')`); }
 
-    
+        
         function saveScratch() { localStorage.setItem('scratchpad', document.getElementById('widget-notes').value); }
         function saveMainNote() { localStorage.setItem('main-note', document.getElementById('main-note-text').value); }
 
@@ -311,6 +355,11 @@
             const now = new Date();
             const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const today = now.getDate();
+            
+            
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('month-name').innerText = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+            
             let html = "";
             for(let i=1; i<=daysInMonth; i++) {
                 html += `<div class="cal-day ${i === today ? 'cal-today' : ''}">${i}</div>`;
